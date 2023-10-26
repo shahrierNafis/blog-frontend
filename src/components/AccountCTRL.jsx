@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { Nav } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { LinkContainer } from "react-router-bootstrap";
@@ -9,16 +8,17 @@ function AccountCTRL({ api, token }) {
   useEffect(() => {
     return () => {};
   }, []);
-
   return (
     <>
-      {token ? (
+      {Object.keys(token).length ? (
         <ButtonGroup>
           <LinkContainer to="/create-post">
             <Button variant="dark">Add Post</Button>
           </LinkContainer>
-          <LinkContainer to="/account">
-            <Button variant="dark">My Account</Button>
+          <LinkContainer to="/account" className="">
+            <Button variant="dark" className="">
+              My Account
+            </Button>
           </LinkContainer>
         </ButtonGroup>
       ) : (
