@@ -4,13 +4,13 @@ import { useOutletContext } from "react-router-dom";
 
 function Logout() {
   const navigate = useNavigate();
-  const { api, fetcher, token } = useOutletContext();
+  const { fetcher, token } = useOutletContext();
 
   useEffect(() => {
     delete token.accessToken;
     delete token.refreshToken;
     localStorage.removeItem("token");
-    fetcher(`${api}logout`, {
+    fetcher(`${import.meta.env.VITE_api}logout`, {
       method: "DELETE",
       mode: "cors",
     });

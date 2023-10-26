@@ -9,7 +9,7 @@ import { json, useNavigate, useOutletContext } from "react-router-dom";
 import Alert from "react-bootstrap/Alert";
 
 function Login() {
-  const { api, token } = useOutletContext();
+  const { token } = useOutletContext();
   const email = useRef();
   const password = useRef();
   const [errors, setErrors] = useState();
@@ -17,7 +17,7 @@ function Login() {
 
   async function handleClick() {
     // Post login up request
-    const response = await fetch(`${api}login`, {
+    const response = await fetch(`${import.meta.env.VITE_api}login`, {
       method: "POST",
       mode: "cors",
       headers: {
@@ -37,6 +37,7 @@ function Login() {
       localStorage.setItem("token", JSON.stringify(token));
       navigate("/");
     } else {
+      console.log(response);
       // Get errors
       response.json().then((data) => {
         setErrors(data.errors);

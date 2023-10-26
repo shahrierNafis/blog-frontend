@@ -4,7 +4,7 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { LinkContainer } from "react-router-bootstrap";
 import PropTypes from "prop-types";
 
-function AccountCTRL({ api, token }) {
+function AccountCTRL({ token }) {
   useEffect(() => {
     return () => {};
   }, []);
@@ -35,7 +35,6 @@ function AccountCTRL({ api, token }) {
   );
 }
 AccountCTRL.propTypes = {
-  api: PropTypes.string,
   token: PropTypes.object,
 };
 export default AccountCTRL;

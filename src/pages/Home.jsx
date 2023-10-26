@@ -1,11 +1,9 @@
 import React from "react";
-import { useOutletContext } from "react-router-dom";
 
 function Home() {
-  const { api } = useOutletContext();
   const [posts, setPosts] = React.useState([]);
   React.useEffect(() => {
-    fetch(`${api}posts`, { mode: "cors" })
+    fetch(`${import.meta.env.VITE_api}posts`, { mode: "cors" })
       .then((res) => res.json())
       .then((data) => {
         setPosts(data);
@@ -14,7 +12,7 @@ function Home() {
         console.log(rejected);
       });
     return () => {};
-  }, [api]);
+  }, []);
   return (
     <>
       {posts.map((post) => (

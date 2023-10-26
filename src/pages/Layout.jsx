@@ -1,4 +1,3 @@
-import React from "react";
 import { Outlet } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
@@ -9,7 +8,6 @@ import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
 function Layout() {
-  const api = "http://localhost:3000/v1/";
   const token = JSON.parse(localStorage.getItem("token")) || {};
   const navigate = useNavigate();
 
@@ -22,7 +20,7 @@ function Layout() {
         // if expired refresh token
         // check if refresh token is expired
         if (decodedRefToken.exp * 1000 > new Date().getTime()) {
-          const res = await fetch(`${api}refresh-token`, {
+          const res = await fetch(`${import.meta.env.VITE_api}refresh-token`, {
             method: "POST",
             mode: "cors",
             headers: {
@@ -73,13 +71,13 @@ function Layout() {
                   <Nav.Link>Home</Nav.Link>
                 </LinkContainer>
               </Nav>
-              <AccountCTRL token={token} api={api}></AccountCTRL>
+              <AccountCTRL token={token}></AccountCTRL>
             </Navbar.Collapse>
           </Container>
         </Navbar>
         {/* content */}
         <Container id="Outlet" className="flex flex-column flex-grow-1 p-0">
-          <Outlet context={{ api, token, fetcher }}></Outlet>
+          <Outlet context={{ token, fetcher }}></Outlet>
         </Container>
       </Container>
     </>

@@ -8,14 +8,14 @@ import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
 import { useNavigate, useOutletContext } from "react-router-dom";
 function SignUp() {
-  const { api, token } = useOutletContext();
+  const { token } = useOutletContext();
   const email = useRef();
   const password = useRef();
   const [errors, setErrors] = useState();
   const navigate = useNavigate();
   async function handleClick() {
     // Post sign up request
-    const response = await fetch(`${api}users`, {
+    const response = await fetch(`${import.meta.env.VITE_api}users`, {
       method: "POST",
       mode: "cors",
       headers: {
@@ -40,7 +40,7 @@ function SignUp() {
   }
   async function Login() {
     // Post login up request
-    const response = await fetch(`${api}login`, {
+    const response = await fetch(`${import.meta.env.VITE_api}login`, {
       method: "POST",
       mode: "cors",
       headers: {
