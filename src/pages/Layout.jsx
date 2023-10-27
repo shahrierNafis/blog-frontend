@@ -6,57 +6,73 @@ import { LinkContainer } from "react-router-bootstrap";
 import AccountCTRL from "../components/AccountCTRL";
 import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { useRef } from "react";
 
 function Layout() {
   const token = JSON.parse(localStorage.getItem("token")) || {};
   const navigate = useNavigate();
+  const pendingUpdate = useRef();
 
-  async function fetcher(url, options) {
-    try {
+  async function UpdateToken() {
+    // check if token exists
+    if (!token.refreshToken) {
+      // if not redirect to login
+      navigate("/login");
+    } else {
       const decodedAccToken = jwt_decode(token.accessToken);
       const decodedRefToken = jwt_decode(token.refreshToken);
-      // check if access token is expired
-      if (decodedAccToken.exp * 1000 < new Date().getTime()) {
-        // if expired refresh token
-        // check if refresh token is expired
-        if (decodedRefToken.exp * 1000 > new Date().getTime()) {
-          const res = await fetch(`${import.meta.env.VITE_api}refresh-token`, {
-            method: "POST",
-            mode: "cors",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              token: token.refreshToken,
-            }),
-          });
-          // if any error occurs logout
-          if (!res.ok) {
-            navigate("/logout");
+      // check if update is pending
+      if (pendingUpdate.current) {
+        return pendingUpdate.current;
+      } else {
+        // check if access token is expired
+        if (decodedAccToken.exp * 1000 < new Date().getTime()) {
+          // check if refresh token is expired
+          if (decodedRefToken.exp * 1000 > new Date().getTime()) {
+            // if not, start updating token
+            pendingUpdate.current = fetch(
+              `${import.meta.env.VITE_api}refresh-token`,
+              {
+                method: "POST",
+                mode: "cors",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  token: token.refreshToken,
+                }),
+              }
+            )
+              .then((res) => {
+                // if any error occurs logout
+                if (!res.ok) {
+                  navigate("/logout");
+                } else {
+                  return res.json();
+                }
+              })
+              .then((json) => {
+                // if ok update token
+                token.accessToken = json.accessToken;
+                token.refreshToken = json.refreshToken;
+                localStorage.setItem("token", JSON.stringify(token));
+              })
+              .finally(() => {
+                // done updating
+                delete pendingUpdate.current;
+              });
+            return pendingUpdate.current;
           } else {
-            // if ok update token
-            const { accessToken, refreshToken } = await res.json();
-            token.accessToken = accessToken;
-            token.refreshToken = refreshToken;
-            localStorage.setItem("token", JSON.stringify(token));
-            console.log("token updated");
+            // Refresh token is expired, logout
+            navigate("/logout");
           }
         } else {
-          // if refresh token is expired logout
-          navigate("/logout");
+          return true;
         }
       }
-      return fetch(url, {
-        ...options,
-        headers: {
-          Authorization: `Bearer ${token.accessToken}`,
-        },
-      });
-    } catch (error) {
-      // if any error occurs logout
-      navigate("/logout");
     }
   }
+
   return (
     <>
       <Container className="flex flex-column vh-100">
@@ -71,13 +87,16 @@ function Layout() {
                   <Nav.Link>Home</Nav.Link>
                 </LinkContainer>
               </Nav>
-              <AccountCTRL token={token}></AccountCTRL>
+              <AccountCTRL
+                token={token}
+                UpdateToken={UpdateToken}
+              ></AccountCTRL>
             </Navbar.Collapse>
           </Container>
         </Navbar>
         {/* content */}
         <Container id="Outlet" className="flex flex-column flex-grow-1 p-0">
-          <Outlet context={{ token, fetcher }}></Outlet>
+          <Outlet context={{ token, UpdateToken }}></Outlet>
         </Container>
       </Container>
     </>

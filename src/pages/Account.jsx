@@ -4,19 +4,23 @@ import { LinkContainer } from "react-router-bootstrap";
 import Button from "react-bootstrap/Button";
 
 function Account() {
-  const { fetcher } = useOutletContext();
+  const { token, UpdateToken } = useOutletContext();
   const [user, setUser] = useState();
   useEffect(() => {
     (async () => {
-      const res = await fetcher(`${import.meta.env.VITE_api}users/me`, {
+      await UpdateToken();
+      const res = await fetch(`${import.meta.env.VITE_api}users/me`, {
         mode: "cors",
+        headers: {
+          Authorization: `Bearer ${token.accessToken}`,
+        },
       });
       const user = await res.json();
       setUser(user);
     })();
 
     return () => {};
-  }, [fetcher]);
+  }, [UpdateToken, token]);
 
   return (
     <>

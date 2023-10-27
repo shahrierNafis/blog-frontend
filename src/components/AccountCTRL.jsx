@@ -1,20 +1,40 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { LinkContainer } from "react-router-bootstrap";
 import PropTypes from "prop-types";
 
-function AccountCTRL({ token }) {
+function AccountCTRL({ token, UpdateToken }) {
+  const [user, setUser] = useState({});
+
   useEffect(() => {
+    // check if token exists
+    //or will cause loop
+    Object.keys(token).length &&
+      (async () => {
+        await UpdateToken;
+        const res = await fetch(`${import.meta.env.VITE_api}users/me`, {
+          mode: "cors",
+          headers: {
+            Authorization: `Bearer ${token.accessToken}`,
+          },
+        });
+        const user = await res.json();
+        setUser(user);
+      })();
+
     return () => {};
-  }, []);
+  }, [token, UpdateToken]);
   return (
     <>
+      {/* if token exists */}
       {Object.keys(token).length ? (
         <ButtonGroup>
-          <LinkContainer to="/create-post">
-            <Button variant="dark">Add Post</Button>
-          </LinkContainer>
+          {user.role === ("admin" || "editor" || "author") && (
+            <LinkContainer to="/create-post">
+              <Button variant="dark">Add Post</Button>
+            </LinkContainer>
+          )}
           <LinkContainer to="/account" className="">
             <Button variant="dark" className="">
               My Account
@@ -36,5 +56,6 @@ function AccountCTRL({ token }) {
 }
 AccountCTRL.propTypes = {
   token: PropTypes.object,
+  UpdateToken: PropTypes.func,
 };
 export default AccountCTRL;
