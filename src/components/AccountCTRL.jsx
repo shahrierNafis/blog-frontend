@@ -12,15 +12,17 @@ function AccountCTRL({ token, UpdateToken }) {
     //or will cause loop
     Object.keys(token).length &&
       (async () => {
-        await UpdateToken;
-        const res = await fetch(`${import.meta.env.VITE_api}users/me`, {
-          mode: "cors",
-          headers: {
-            Authorization: `Bearer ${token.accessToken}`,
-          },
-        });
-        const user = await res.json();
-        setUser(user);
+        await UpdateToken();
+        setUser(
+          await (
+            await fetch(`${import.meta.env.VITE_api}users/me`, {
+              mode: "cors",
+              headers: {
+                Authorization: `Bearer ${token.accessToken}`,
+              },
+            })
+          ).json()
+        );
       })();
 
     return () => {};
@@ -30,7 +32,7 @@ function AccountCTRL({ token, UpdateToken }) {
       {/* if token exists */}
       {Object.keys(token).length ? (
         <ButtonGroup>
-          {user.role === ("admin" || "editor" || "author") && (
+          {["admin", "editor", "author"].includes(user.role) && (
             <LinkContainer to="/create-post">
               <Button variant="dark">Add Post</Button>
             </LinkContainer>

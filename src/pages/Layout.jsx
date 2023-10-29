@@ -75,7 +75,7 @@ function Layout() {
 
   return (
     <>
-      <Container className="flex flex-column vh-100">
+      <Container className="fluid flex flex-column vh-100">
         {/* nav */}
         <Navbar expand="lg" className="bg-body-tertiary">
           <Container>

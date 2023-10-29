@@ -1,4 +1,6 @@
 import React from "react";
+import Card from "react-bootstrap/Card";
+import { LinkContainer } from "react-router-bootstrap";
 
 function Home() {
   const [posts, setPosts] = React.useState([]);
@@ -15,9 +17,13 @@ function Home() {
   }, []);
   return (
     <>
-      {posts.map((post) => (
-        <div key={post.id}>{post.title}</div>
-      ))}
+      {posts && posts.length > 0
+        ? posts.map((post) => (
+            <LinkContainer key={post._id} to={`/post/${post._id}`}>
+              <h1 className="hover:text-sky-500">{"->" + post.title}</h1>
+            </LinkContainer>
+          ))
+        : "loading..."}
     </>
   );
 }
