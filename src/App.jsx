@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Account from "./pages/Account";
 import Logout from "./pages/Logout";
 import "./App.css";
+import CreatePost from "./pages/CreatePost";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/account" element={<Account />} />
             <Route path="/logout" element={<Logout />} />
+            <Route path="/create-post" element={<CreatePost />} />
           </Route>
         </Routes>
       </BrowserRouter>
