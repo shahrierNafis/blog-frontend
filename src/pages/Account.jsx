@@ -61,6 +61,8 @@ function Account() {
               post={post}
               UpdateToken={UpdateToken}
               token={token}
+              posts={posts}
+              setPosts={setPosts}
             />
           ))
         : "loading..."}

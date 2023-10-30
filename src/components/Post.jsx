@@ -5,7 +5,7 @@ import { LinkContainer } from "react-router-bootstrap";
 import Button from "react-bootstrap/Button";
 import { useReducer } from "react";
 
-function Post({ post, UpdateToken, token }) {
+function Post({ post, UpdateToken, token, posts, setPosts }) {
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const textWithoutTitle = post.text
@@ -43,6 +43,18 @@ function Post({ post, UpdateToken, token }) {
     post.state = "draft";
     forceUpdate();
   }
+  async function remove() {
+    await UpdateToken();
+    await fetch(`${import.meta.env.VITE_api}posts/${post._id}`, {
+      method: "DELETE",
+      mode: "cors",
+      headers: {
+        Authorization: `Bearer ${token.accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+    setPosts(posts.filter((p) => p._id !== post._id));
+  }
   return (
     <>
       <Card className="max-h-64	 m-2 overflow-y-scroll">
@@ -55,13 +67,18 @@ function Post({ post, UpdateToken, token }) {
                   {post.title}
                 </span>
               </LinkContainer>
+              {post && (
+                <Button variant="danger" onClick={remove} className="ml-auto ">
+                  Delete
+                </Button>
+              )}
               {post && post.state == "draft" && (
-                <Button variant="primary" onClick={publish} className="ml-auto">
+                <Button variant="primary" onClick={publish} className="m-2">
                   Publish
                 </Button>
               )}
               {post && post.state == "published" && (
-                <Button variant="primary" onClick={draft} className="ml-auto">
+                <Button variant="primary" onClick={draft} className="m-2">
                   Draft
                 </Button>
               )}
@@ -78,5 +95,7 @@ Post.propTypes = {
   post: PropTypes.object,
   UpdateToken: PropTypes.func,
   token: PropTypes.object,
+  posts: PropTypes.array,
+  setPosts: PropTypes.func,
 };
 export default Post;
