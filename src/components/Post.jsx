@@ -4,10 +4,11 @@ import PropTypes from "prop-types";
 import { LinkContainer } from "react-router-bootstrap";
 import Button from "react-bootstrap/Button";
 import { useReducer } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Post({ post, UpdateToken, token, posts, setPosts }) {
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
-
+  const navigate = useNavigate();
   const textWithoutTitle = post.text
     .replace(post.title, "")
     .replace("<h1></h1>", "");
@@ -55,6 +56,9 @@ function Post({ post, UpdateToken, token, posts, setPosts }) {
     });
     setPosts(posts.filter((p) => p._id !== post._id));
   }
+  async function edit() {
+    navigate(`/post/${post._id}/edit`);
+  }
   return (
     <>
       <Card className="max-h-64	 m-2 overflow-y-scroll">
@@ -80,6 +84,11 @@ function Post({ post, UpdateToken, token, posts, setPosts }) {
               {post && post.state == "published" && (
                 <Button variant="primary" onClick={draft} className="m-2">
                   Draft
+                </Button>
+              )}
+              {post && (
+                <Button variant="primary" onClick={edit} className="">
+                  Edit
                 </Button>
               )}
             </div>

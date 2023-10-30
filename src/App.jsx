@@ -8,6 +8,7 @@ import Logout from "./pages/Logout";
 import "./App.css";
 import CreatePost from "./pages/CreatePost";
 import Post from "./pages/Post";
+import Edit from "./pages/Edit";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/logout" element={<Logout />} />
             <Route path="/create-post" element={<CreatePost />} />
             <Route path="/post/:id" element={<Post />} />
+            <Route path="/post/:id/edit" element={<Edit />} />
           </Route>
         </Routes>
       </BrowserRouter>
