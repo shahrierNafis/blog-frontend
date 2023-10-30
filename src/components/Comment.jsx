@@ -23,7 +23,7 @@ function Comment({ comment, UpdateToken, token, setComments, comments }) {
   }, [UpdateToken, token, comment]);
   async function remove() {
     await UpdateToken();
-    await fetch(`${import.meta.env.VITE_api}/comments/${comment._id}`, {
+    await fetch(`${import.meta.env.VITE_api}comments/${comment._id}`, {
       method: "DELETE",
       mode: "cors",
       headers: {

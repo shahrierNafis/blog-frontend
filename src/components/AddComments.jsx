@@ -11,7 +11,7 @@ function AddComments({ UpdateToken, token, id, comments, setComments }) {
       await UpdateToken();
       setUser(
         await (
-          await fetch(`${import.meta.env.VITE_api}/users/me`, {
+          await fetch(`${import.meta.env.VITE_api}users/me`, {
             mode: "cors",
             headers: {
               Authorization: `Bearer ${token.accessToken}`,
@@ -30,7 +30,7 @@ function AddComments({ UpdateToken, token, id, comments, setComments }) {
     setComments([
       ...comments,
       await (
-        await fetch(`${import.meta.env.VITE_api}/posts/${id}/comments`, {
+        await fetch(`${import.meta.env.VITE_api}posts/${id}/comments`, {
           method: "POST",
           mode: "cors",
           headers: {
