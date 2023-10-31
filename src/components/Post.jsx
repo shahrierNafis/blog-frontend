@@ -1,17 +1,38 @@
 import Card from "react-bootstrap/Card";
 import parse from "html-react-parser";
+
 import PropTypes from "prop-types";
 import { LinkContainer } from "react-router-bootstrap";
 import Button from "react-bootstrap/Button";
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
+import "highlight.js/styles/obsidian.css";
+import hljs from "highlight.js";
 
+/**
+ * Component for rendering a post.
+ *
+ * @param {Object} props - The component props.
+ * @param {Object} props.post - The post object.
+ * @param {Function} props.UpdateToken - The function for updating the token.
+ * @param {Object} props.token - The token object.
+ * @param {Array} props.posts - The array of posts.
+ * @param {Function} props.setPosts - The function for updating the posts array.
+ * @returns {ReactElement} The rendered post component.
+ */
 function Post({ post, UpdateToken, token, posts, setPosts }) {
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const navigate = useNavigate();
+
+  // Remove the title from the post text
   const textWithoutTitle = post.text
-    .replace(post.title, "")
+    .replace(`${post.title}`, "")
     .replace("<h1></h1>", "");
+
+  /**
+   * Publishes the post.
+   * Updates the token and sends a PUT request to update the post state to "published".
+   */
   async function publish() {
     await UpdateToken();
     await fetch(`${import.meta.env.VITE_api}posts/${post._id}`, {
@@ -28,6 +49,11 @@ function Post({ post, UpdateToken, token, posts, setPosts }) {
     post.state = "published";
     forceUpdate();
   }
+
+  /**
+   * Sets the post state to "draft".
+   * Updates the token and sends a PUT request to update the post state to "draft".
+   */
   async function draft() {
     await UpdateToken();
     await fetch(`${import.meta.env.VITE_api}posts/${post._id}`, {
@@ -44,6 +70,12 @@ function Post({ post, UpdateToken, token, posts, setPosts }) {
     post.state = "draft";
     forceUpdate();
   }
+
+  /**
+   * Removes the post.
+   * Updates the token and sends a DELETE request to remove the post.
+   * Updates the posts array by removing the deleted post.
+   */
   async function remove() {
     await UpdateToken();
     await fetch(`${import.meta.env.VITE_api}posts/${post._id}`, {
@@ -56,19 +88,27 @@ function Post({ post, UpdateToken, token, posts, setPosts }) {
     });
     setPosts(posts.filter((p) => p._id !== post._id));
   }
+
+  /**
+   * Navigates to the post edit page.
+   */
   async function edit() {
     navigate(`/post/${post._id}/edit`);
   }
+
+  useEffect(() => {
+    hljs.highlightAll();
+  });
+
   return (
     <>
-      <Card className="max-h-64	 m-2 overflow-y-scroll">
+      <Card className="max-h-64 m-2 overflow-y-scroll">
         <Card.Body>
           <Card.Title>
-            {" "}
             <div className="flex align-items-center">
               <LinkContainer to={`/post/${post._id}`}>
                 <span className="hover:text-sky-500 text-5xl">
-                  {post.title}
+                  {parse(post.title)}
                 </span>
               </LinkContainer>
               {post && (
